@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:task1/model/radom_users.dart';
 import 'package:http/http.dart' as http;
 import 'package:task1/screens/gender_map_list.dart';
@@ -16,8 +17,6 @@ class MyApp extends StatelessWidget {
 
   static const appTitle = 'Home';
 
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,21 +24,14 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(
         title: appTitle,
       ),
-      // routes: {
-      //   GenderMap.routeName: (ctx) => GenderMap(),
-      //   MyHomePage.routeName: (ctx) => MyHomePage(
-      //         title: 'Home',
-      //       )
-      // },
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   String title;
- // static const routeName = '/gender_list';
 
-  MyHomePage({Key key,  this.title}) : super(key: key);
+  MyHomePage({Key key, this.title}) : super(key: key);
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -48,11 +40,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
-   RadomUsers radomUsers;
+  RadomUsers radomUsers;
 
-   List<Results> list;
+  List<Results> list;
 
-   List filteredGender = [];
+  List filteredGender = [];
 
   Future getDataFromApi() async {
     final url = Uri.parse('https://randomuser.me/api/?results=10');
@@ -63,12 +55,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void filterGenderList(value) {
     setState(() {
-      if (filteredGender.contains("female")) {
-        filteredGender =
-            list.where((element) => (element.gender == "female")).toList();
+      if(value == "male"){
+           filteredGender =
+              list.where((element) => (element.gender == "male")).toList();
+      }else{
+           filteredGender =
+              list.where((element) => element.gender == "female").toList();
       }
-      filteredGender =
-          list.where((element) => element.gender == "male").toList();
     });
   }
 
@@ -79,7 +72,6 @@ class _MyHomePageState extends State<MyHomePage> {
     getDataFromApi().then((value) {
       setState(() {
         list = filteredGender = value;
-        print(filteredGender);
       });
     });
     super.initState();
@@ -109,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
             getDataFromApi().then((value) {
               setState(() {
                 list = filteredGender = value;
-                print(filteredGender);
               });
               widget.title = "Home";
             });
@@ -120,8 +111,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget drawerItems() {
-    // final Map genderMap =
-    //     ModalRoute.of(context).settings.arguments as Map<String, String>;
     return Container(
       color: Colors.blue,
       child: Padding(
@@ -179,10 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onTap: () {
                   setState(() {
-                    Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GenderMap()),
-              );
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => GenderMap()));
                   });
                 },
               ),
@@ -204,11 +191,13 @@ class _MyHomePageState extends State<MyHomePage> {
             child: Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Image.network(k.picture.large.toString()),
+                  padding: const EdgeInsets.only(left: 5.0, right: 5.0),
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(16.0),
+                      child: Image.network(k.picture.large.toString())),
                 ),
                 Container(
-                  width: 250,
+                  width: MediaQuery.of(context).size.width * 0.5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Column(
